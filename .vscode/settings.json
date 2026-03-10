@@ -1,3 +1,9 @@
 {
-    
+    "editor.acceptSuggestionOnEnter": "off",
+    "editor.acceptSuggestionOnCommitCharacter": false,
+    "editor.aiStats.enabled": false,
+    "editor.codeLens": false,
+    "editor.minimap.enabled": false,
+    "json.maxItemsComputed": 5000,
+    "editor.suggest.showSnippets": false
 }
