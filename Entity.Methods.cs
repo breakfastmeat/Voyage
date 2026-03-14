@@ -1,6 +1,6 @@
 namespace Voyage;
 
-public partial struct Entity
+public partial struct Entity : IHasID<int>, IEquatable<Entity>
 {
       // not recommended to create an entity without world.
       public Entity() {}
@@ -21,5 +21,18 @@ public partial struct Entity
       // creates a 'null' entity (no archetype or position)
       public static Entity Null => new Entity(-1, 0, 0);
 
+      public int GetID() => EntityID;
+
       public override int GetHashCode() => HashCode.Combine(EntityID, ArchetypeID, Queue);
+      public bool IsNull() => EntityID == -1;
+      public static bool IsNull(in Entity entity) => entity.IsNull();
+
+      // operators
+
+      public bool Equals(Entity other)
+      {
+            (ushort, ushort) ver = (ArchetypeID, Queue), ver2 = (other.ArchetypeID, other.Queue);
+            return ver == ver2;
+      }
+      
 }
