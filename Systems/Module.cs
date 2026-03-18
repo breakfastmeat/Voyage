@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 namespace Voyage.Operation;
 
 public class Module<T> : IModule<T>, IModule
@@ -7,6 +8,8 @@ public class Module<T> : IModule<T>, IModule
       internal byte[] _sparseSet;
 
       public T[] GetBuffer() => _buffer;
+      public ImmutableArray<byte> GetSparse() => _sparseSet.ToImmutableArray();
+      public ImmutableArray<ushort> GetDense() => _denseSet.ToImmutableArray();
 
       internal Module(uint initialAmount)
       {
@@ -43,7 +46,7 @@ public class Module<T> : IModule<T>, IModule
             Refresh();
       }
 
-      // despite this being public, let the Module (or archetypes) handle it.
+      // despite this being public, let the Module (or archetype) handle it.
       public void Refresh()
       {
             uint length = 0;
@@ -59,4 +62,6 @@ public class Module<T> : IModule<T>, IModule
                   if (_sparseSet[i] == 1) _denseSet[tracker++] = i;
             }
       }
+
+      public static Module<T> Create(uint initialAmount) => new Module<T>(initialAmount);
 }
