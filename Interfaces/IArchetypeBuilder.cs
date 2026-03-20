@@ -1,8 +1,8 @@
 using Voyage.Operation;
 namespace Voyage;
 
-public interface IArchetypeBuilder
+internal interface IArchetypeBuilder<TBuilder> where TBuilder : class
 {
-      public Archetype Finalize(uint archetypeID);
-      public Archetype Return();
+      public TBuilder Initialize(int typeCount, uint initialCapacity); 
+      public Archetype Finalize(int archetypeID);
 }

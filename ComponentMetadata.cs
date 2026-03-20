@@ -1,4 +1,5 @@
-﻿namespace Voyage;
+﻿using System.Collections.Immutable;
+namespace Voyage;
 
 internal static class ComponentCounter 
 {
