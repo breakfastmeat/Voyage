@@ -24,7 +24,20 @@ public static class ArrayHelper<T>
             return destination;
       }
 
-      public static void Resize(ref T[] source, int newLength) => source = new T[newLength];
+      public static T[] Copy(T[] source, int start, int end)
+      {
+            int distanceLength = end - start;
+            if (distanceLength < 0) throw new ArgumentException($"start parameter can not be greater than length of array.");
+
+            T[] destination = new T[distanceLength];
+            for(int i = 0; i < distanceLength; i++)
+            {
+                  int sourceIndex = start + i;
+                  if (sourceIndex > end) break;
+                  destination[i] = source[sourceIndex];
+            }
+            return destination;
+      }
 
       /// <summary>
       /// method that both resizes and copies elements into a new array.

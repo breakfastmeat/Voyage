@@ -10,7 +10,7 @@ public partial class Archetype
 
       internal string _collectedTypes;
       internal object[] _dataMatrix;
-      internal sbyte[] _indexMap;
+      internal byte[] _indexMap;
 
       public ImmutableHashSet<Type> TypeSet => _typeSet.ToImmutableHashSet();
       public int ArchetypeID { get; internal set; }
@@ -30,7 +30,14 @@ public partial class Archetype
             TypeCount = 0;
       }
 
+      public static Archetype Construct<TBuilder>(TBuilder builder) where TBuilder : IArchetypeBuilder
+      {
+            return builder.Return();
+      }
+
       public object this[int id] => _dataMatrix[id];
+
+      public ImmutableArray<byte> IndexMap => _indexMap.ToImmutableArray();
 
       /// <summary>
       /// this method returns the desired module.
@@ -40,7 +47,6 @@ public partial class Archetype
       /// <typeparam name="T">the type to look for.</typeparam>
       /// <returns>returns the module holding the specified type.</returns>
       /// <exception cref="ArgumentOutOfRangeException">this exception is called when the Module types ID is not in the bounds of the array.</exception>
-      /// <exception cref="InvalidCastException">if compID is -1, component is not within the bounds of the array.</exception>
       public Module<T> GetModule<T>()
       {
             uint compID = ComponentMetadata<T>.ID;
@@ -50,9 +56,7 @@ public partial class Archetype
                   throw new ArgumentOutOfRangeException($"{typeof(T)} is not in the archetype. {compID} > {_indexMap.Length - 1}");
             }
 
-            sbyte indexToMod = _indexMap[compID];
-
-            if (indexToMod == -1) throw new ArgumentNullException($"can't cast a type that isn't defined in the archetype.");
+            byte indexToMod = _indexMap[compID];
 
             return (Module<T>)_dataMatrix[indexToMod];
       }
