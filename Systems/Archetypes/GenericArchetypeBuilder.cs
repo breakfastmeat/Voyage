@@ -10,7 +10,7 @@ public class ArchetypeBuilder : IArchetypeBuilder
       internal byte[] _indexMap = Array.Empty<byte>();
       internal Type[] _types;
 
-      private sbyte _typesCounted = 0;
+      private byte _typesCounted = 0;
       private uint _cap;
 
       public ArchetypeBuilder(int fixedCount, uint capacity)
@@ -25,14 +25,14 @@ public class ArchetypeBuilder : IArchetypeBuilder
       public ArchetypeBuilder Implement<T>()
       {
             Type typeOfGeneric = typeof(T);
-            sbyte curIndex = _typesCounted++;
+            byte curIndex = _typesCounted++;
             ushort compID = ComponentMetadata<T>.ID;
 
             if (curIndex > _archetype.TypeCount - 1)
             {
                   throw new ArgumentOutOfRangeException($"too many types have been implemented beyond the type buffer: {curIndex}");
             }
-            else if (compID > _indexMap.Length - 1) ArrayHelper<sbyte>.CopyAndResize(ref _indexMap, compID + 4);
+            else if (compID > _indexMap.Length - 1) ArrayHelper<byte>.CopyAndResize(ref _indexMap, compID + 4);
 
             if (_types[_indexMap[compID]] == typeOfGeneric) throw new ArgumentException($"{typeOfGeneric} is already defined in archetype.");
 
