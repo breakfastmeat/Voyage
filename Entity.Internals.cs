@@ -6,7 +6,7 @@ public partial struct Entity
       internal ushort ArchetypeID;
       internal ushort Queue;
 
-      public struct EntityReader
+      public readonly struct EntityReader
       {
             public readonly int EntityID;
             public readonly ushort ArchetypeID;
@@ -22,7 +22,7 @@ public partial struct Entity
             public static EntityReader GetInfo(Entity entity) => new(entity);
       }
 
-      public struct EntityLookup
+      public readonly struct EntityLookup
       {
             public readonly ushort ArchetypeID;
             public readonly ushort Queue;

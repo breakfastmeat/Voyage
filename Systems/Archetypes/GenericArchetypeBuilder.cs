@@ -43,7 +43,7 @@ public class ArchetypeBuilder : IArchetypeBuilder
             return this;
       }
 
-      public ArchetypeBuilder Finalize(int id)
+      public ArchetypeBuilder Finalize(ushort id)
       {
             _archetype.ArchetypeID = id;
             _archetype.TypeCount = _typesCounted + 1;
@@ -51,6 +51,7 @@ public class ArchetypeBuilder : IArchetypeBuilder
             _archetype._dataMatrix = _modules;
             _archetype._collectedTypes = string.Join(", ", _archetype._typeSet);
             _archetype._indexMap = _indexMap;
+            _archetype._entityMap = FastStack<int>.Create((int)_cap);
             return this;
       }
 

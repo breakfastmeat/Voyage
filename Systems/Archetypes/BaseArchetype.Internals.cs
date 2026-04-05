@@ -14,7 +14,7 @@ public partial class Archetype
       internal FastStack<int> _entityMap;
       
       public ImmutableHashSet<Type> TypeSet => _typeSet.ToImmutableHashSet();
-      public int ArchetypeID { get; internal set; }
+      public ushort ArchetypeID { get; internal set; }
       public int TypeCount { get; internal set; }
 
       public override string ToString() => _collectedTypes ?? string.Empty;
@@ -26,7 +26,7 @@ public partial class Archetype
             _dataMatrix = null!;
             _indexMap = null!;
             _typeSet = null!;
-            ArchetypeID = -1;
+            ArchetypeID = 0;
             TypeCount = 0;
       }
 
@@ -37,7 +37,7 @@ public partial class Archetype
 
       public Module<T> GetModule<T>()
       {
-            uint compID = ComponentMetadata<T>.ID;
+            ushort compID = ComponentMetadata<T>.ID;
 
             if (compID > _indexMap.Length - 1)
             {
@@ -52,7 +52,7 @@ public partial class Archetype
       // note: this method is Unsafe.
       public Module<T> UnboxModule<T>()
       {
-            uint compID = ComponentMetadata<T>.ID;
+            ushort compID = ComponentMetadata<T>.ID;
 
             byte indexToMod = _indexMap[compID];
             return Unsafe.As<Module<T>>(this[indexToMod]);
