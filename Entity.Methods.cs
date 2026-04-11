@@ -21,15 +21,16 @@ public partial struct Entity : IHasID<int>, IEquatable<Entity>
       // creates a 'null' entity (no archetype or position)
       public static Entity Null => new Entity(-1, 0, 0);
 
-      public int GetID() => EntityID;
+      public readonly int GetID() => EntityID;
+      readonly object IHasID.GetID() => EntityID;
 
-      public override int GetHashCode() => HashCode.Combine(EntityID, ArchetypeID, Queue);
-      public bool IsNull() => EntityID == -1;
+      public override readonly int GetHashCode() => HashCode.Combine(EntityID, ArchetypeID, Queue);
+      public readonly bool IsNull() => EntityID == -1;
       public static bool IsNull(in Entity entity) => entity.IsNull();
 
       // operators
 
-      public bool Equals(Entity other)
+      public readonly bool Equals(Entity other)
       {
             (ushort, ushort) ver = (ArchetypeID, Queue), ver2 = (other.ArchetypeID, other.Queue);
             return ver == ver2;

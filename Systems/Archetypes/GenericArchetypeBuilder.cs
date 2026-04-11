@@ -5,10 +5,10 @@ public class ArchetypeBuilder : IArchetypeBuilder
 {
       internal Archetype _archetype = Archetype.Null;
 
-      internal object[] _modules;
+      internal object[] _modules = [];
       internal string _collectedTypes = null!;
-      internal byte[] _indexMap = Array.Empty<byte>();
-      internal Type[] _types;
+      internal byte[] _indexMap = [];
+      internal Type[] _types = [];
 
       private byte _typesCounted = 0;
       private readonly int _cap;
@@ -43,15 +43,14 @@ public class ArchetypeBuilder : IArchetypeBuilder
             return this;
       }
 
-      public ArchetypeBuilder Finalize(ushort id)
+      public ArchetypeBuilder Finalize()
       {
-            _archetype.ArchetypeID = id;
             _archetype.TypeCount = _typesCounted + 1;
-            _archetype._typeSet = _types.ToHashSet();
+            _archetype._typeSet = [.. _types];
             _archetype._dataMatrix = _modules;
             _archetype._collectedTypes = string.Join(", ", _archetype._typeSet);
             _archetype._indexMap = _indexMap;
-            _archetype._entityMap = FastStack<int>.Create((int)_cap);
+            _archetype._entityMap = FastStack<int>.Create(_cap);
             return this;
       }
 

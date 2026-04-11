@@ -36,7 +36,7 @@ public class Module<T> : IModule<T>, IEnumerable<T>
                   throw new ArgumentOutOfRangeException($"{indexToElement} is out of bounds of buffer.");
             }
             
-            var convertValue = Convert.ToByte(toggle);
+            var convertValue = Unsafe.BitCast<bool, byte>(toggle);
             if (_sparseSet[indexToElement] != convertValue)
             {
                   _sparseSet[indexToElement] = convertValue;
@@ -46,13 +46,18 @@ public class Module<T> : IModule<T>, IEnumerable<T>
 
       public void ToggleElementSelection(ushort[] indices, bool toggle)
       {
+            bool queue = false;
+            var convertValue = Unsafe.BitCast<bool, byte>(toggle);
+
             for(int i = 0; i < indices.Length; i++)
             {
                   if (indices[i] > Length - 1) throw new ArgumentOutOfRangeException($"at index {i}, {indices[i]}, is out of bounds.");
 
-                  _sparseSet[indices[i]] = Convert.ToByte(toggle);
+                  ref var index = ref _sparseSet[indices[i]];
+                  if (index != convertValue) queue = true;
+                  index = convertValue; 
             }
-            Refresh();
+            if (queue) Refresh();
       }
 
       public void Refresh()
@@ -103,9 +108,9 @@ public class Module<T> : IModule<T>, IEnumerable<T>
 
       public IEnumerator<T> GetEnumerator()
       {
-            for(int i = 0; i < _denseSet.Length; i++)
+            for(int i = 0; i < _buffer.Length; i++)
             {
-                  yield return _buffer[_denseSet[i]];
+                  yield return _buffer[i];
             }
       }
 

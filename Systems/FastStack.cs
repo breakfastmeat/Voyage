@@ -27,14 +27,16 @@ public struct FastStack<T> : IEnumerable<T>
 
     public readonly Span<T> AsSpan() => _buffer.AsSpan(0, nextIndex);
 
-    public readonly IEnumerator<T> GetEnumerator() => new FastStackEnumerator(this);
+    readonly IEnumerator<T> IEnumerable<T>.GetEnumerator() => GetEnumerator();
     readonly IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+    public readonly FastStackEnumerator GetEnumerator() => new(this);
 
+    public readonly ref T GetDataReference() => ref MemoryMarshal.GetArrayDataReference(_buffer);
     // methods
     internal readonly ref T Peek() => ref _buffer[nextIndex - 1];
     internal readonly ref T Peak() => ref _buffer[^1];
 
-    internal void Push(T comp)
+    public void Push(T comp)
     {
         if (_buffer == null) _buffer = new T[4];
         else if (nextIndex > BufferSize - 1) ArrayHelper<T>.CopyAndResize(ref _buffer, BufferSize * 2);
@@ -54,7 +56,15 @@ public struct FastStack<T> : IEnumerable<T>
         return nextComp;
     }
 
-    internal struct FastStackEnumerator : IEnumerator<T>
+    public int Compact()
+    {
+        int distanceLength = _buffer.Length - Count;
+
+        ArrayHelper<T>.CopyAndResize(ref _buffer, nextIndex);
+        return distanceLength;
+    }
+
+    public struct FastStackEnumerator : IEnumerator<T>
     {
         T[] buffer;
         int iterator = -1;
