@@ -26,28 +26,20 @@ public partial class Archetype : IHasID<ushort>
 
     // entity indicing
 
-    internal int Increment(int entityID)
+    public bool Increment(ref Entity entity)
     {
-        _entityMap.Push(entityID);
-        int indexValue = _entityPosition++;
+        var index = _entityPosition++;
+        
+        if (index > Capacity - 1) throw new ArgumentException($"Archetype has reached maximum amount of entities.");
+        else if (entity.IsNull()) throw new ArgumentNullException($"{entity} can not be null.");
 
-        if (indexValue > Capacity - 1) throw new ArgumentOutOfRangeException($"maximum amount of entities in an archetype has been reached.");
-        return indexValue;
-    }
-
-    public void ResizeModule<T>(int newLength)
-    {
-        ushort compID = ComponentMetadata<T>.ID;
-        var modID = _indexMap[compID];
-        Module<T> module = (Module<T>)this[modID];
-        module.ResizeModule(newLength);
-    }
-
-    public void ResizeModuleUnsafe<T>(int newLength)
-    {
-        ushort compID = ComponentMetadata<T>.ID;
-        var modID = _indexMap[compID];
-        Module<T> module = Unsafe.As<Module<T>>(this[modID]);
-        module.ResizeModule(newLength);
+        if (entity.Queue > _entityMap.Length - 1) goto exit_success;
+        else if (_entityMap[entity.Queue] == entity.EntityID) return false;
+        
+        exit_success:
+        _entityMap[index] = entity.EntityID;
+        entity = new Entity(entity.EntityID, ArchetypeID, index);
+        
+        return true;
     }
 }

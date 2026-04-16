@@ -67,7 +67,7 @@ public class Module<T> : IModule<T>, IEnumerable<T>
             // this loop reads the array and increments the above field as it passes by bytes with values of 1.
             for(int i = 0; i < _sparseSet.Length; i++)
             {
-                  ref readonly byte index = ref _sparseSet[i];
+                  byte index = _sparseSet[i];
                   if (index == 1) ++amountOfValid;
             }
 
@@ -75,34 +75,38 @@ public class Module<T> : IModule<T>, IEnumerable<T>
             ushort indexTracker = 0;
             for(ushort i = 0; i < _sparseSet.Length; i++)
             {
-                   ref readonly byte indexValue = ref _sparseSet[i];
-                   if (indexValue == 1) _denseSet[indexTracker++] = i; 
+                  byte indexValue = _sparseSet[i];
+                  if (indexValue == 1) _denseSet[indexTracker++] = i; 
             }
       }
 
-      // resizing module.
-      internal void ResizeModule(int newLength)
+      public bool IsElementValid(int index) => _sparseSet[index] == 1;
+
+      public bool AnyElementsValid(ushort[] indices)
       {
-            T[] newBuffer = new T[newLength];
-            byte[] newSparseBuffer = new byte[newLength];
-            int previousLength = this.Length;
-            
-            int min = Math.Min(Length, newLength);
-
-            for(int i = 0; i < min; i++)
+            if (indices.Length == 0) return false;
+            bool queue = false;
+            for(int i = 0; i < indices.Length; i++)
             {
-                  ref readonly T element = ref _buffer[i];
-
-                  newBuffer[i] = element;
-                  newSparseBuffer[i] = _sparseSet[i];
+                  if (_sparseSet[indices[i]] == 1)
+                  {
+                        queue = true;
+                        break;
+                  }
             }
-
-            _sparseSet = newSparseBuffer;
-            _buffer = newBuffer;
-
-            if (min < previousLength) Refresh();
+            return queue;
       }
 
+      public bool AllElementsValid(ushort[] indices)
+      {
+            if (indices.Length == 0) return false;
+
+            for(int i = 0; i < indices.Length; i++)
+            {
+                  if (_sparseSet[indices[i]] == 0) return false;
+            }
+            return true;
+      }
       // enumeration
 
       public IEnumerator<T> GetEnumerator()

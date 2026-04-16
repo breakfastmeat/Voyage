@@ -52,7 +52,7 @@ public class ArchetypeBuilder : IArchetypeBuilder
             _archetype._dataMatrix = _modules;
             _archetype._collectedTypes = string.Join(", ", _archetype._typeSet);
             _archetype._indexMap = _indexMap;
-            _archetype._entityMap = FastStack<int>.Create(_cap);
+            _archetype._entityMap = new int[_cap];
             return this;
       }
 

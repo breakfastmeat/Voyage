@@ -11,12 +11,13 @@ public partial class Archetype
       internal string _collectedTypes;
       internal object[] _dataMatrix;
       internal byte[] _indexMap;
-      internal FastStack<int> _entityMap;
+      internal int[] _entityMap;
       
       public ImmutableHashSet<Type> TypeSet => _typeSet.ToImmutableHashSet();
       public ushort ArchetypeID { get; internal set; }
       public int TypeCount { get; internal set; }
-      internal int _entityPosition = 0;
+      internal ushort _entityPosition = 0;
+      public int Capacity { get; internal set; } = 0;
 
       public override string ToString() => _collectedTypes ?? string.Empty;
       public static Archetype Null => new();
@@ -24,6 +25,7 @@ public partial class Archetype
       internal Archetype()
       {
             _collectedTypes = null!;
+            _entityMap = null!;
             _dataMatrix = null!;
             _indexMap = null!;
             _typeSet = null!;
@@ -34,6 +36,7 @@ public partial class Archetype
       public static Archetype Construct<TBuilder>(TBuilder builder) where TBuilder : IArchetypeBuilder
       {
             Archetype arch = builder.Return();
+            arch.Capacity = builder.GetCapacityCount();
             return arch;
       }
 
