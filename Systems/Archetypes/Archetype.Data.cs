@@ -1,7 +1,7 @@
 using System.Runtime.CompilerServices;
 namespace Voyage.Operation;
 
-public partial class Archetype : IHasID<ushort>
+public partial class Archetype : IHasID<ushort>, IUpdatable
 {
     public ref TComp GetComponent<TComp>(int columnIndex)
     {
@@ -42,4 +42,32 @@ public partial class Archetype : IHasID<ushort>
         
         return true;
     }
+
+    // Updating
+    public void UpdateComponents<TComp>(UpdateAction<TComp> updater)
+    {
+        ushort compID = ComponentMetadata<TComp>.ID;
+        byte rowIndex = _indexMap[compID];
+        var module = (Module<TComp>)this[rowIndex];
+
+        var denseSet = module.GetDenseSet();
+        var denseSetLength = denseSet.Length;
+        
+        if (denseSetLength == 0) return;
+
+        for(int i = 0; i < denseSetLength; i++)
+        {
+            ref TComp component = ref module[denseSet[i]];
+            updater(ref component);
+        }
+    }
+
+    public void Update() => _archetypeUpdater();
+
+    public static void UpdateComponents<T>(Archetype archetype, UpdateAction<T> _updateAction)
+    {
+        if (archetype.ArchetypeID == 0) return;
+        archetype.UpdateComponents(_updateAction);
+    }
+
 }

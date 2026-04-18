@@ -1,7 +1,7 @@
 using Voyage;
-namespace Voyage.Explicit;
+namespace Voyage.Marshals;
 
-public static class EntityExplicit
+public static class EntityMarshal
 {
     public static Entity CreateEntity(int id, ushort arch, ushort queue)
     {

@@ -12,12 +12,17 @@ public partial class Archetype
       internal object[] _dataMatrix;
       internal byte[] _indexMap;
       internal int[] _entityMap;
+
+      // delegates
+      public delegate void UpdateAction<T>(ref T component);
+      public delegate void ArchetypeUpdater();
       
       public ImmutableHashSet<Type> TypeSet => _typeSet.ToImmutableHashSet();
       public ushort ArchetypeID { get; internal set; }
       public int TypeCount { get; internal set; }
       internal ushort _entityPosition = 0;
       public int Capacity { get; internal set; } = 0;
+      internal ArchetypeUpdater _archetypeUpdater;
 
       public override string ToString() => _collectedTypes ?? string.Empty;
       public static Archetype Null => new();
@@ -31,6 +36,7 @@ public partial class Archetype
             _typeSet = null!;
             ArchetypeID = 0;
             TypeCount = 0;
+            _archetypeUpdater = null!;
       }
 
       public static Archetype Construct<TBuilder>(TBuilder builder) where TBuilder : IArchetypeBuilder
@@ -66,6 +72,6 @@ public partial class Archetype
             return Unsafe.As<Module<T>>(this[indexToMod]);
       }
 
-      public override int GetHashCode() => HashCode.Combine(_typeSet, ArchetypeID, _collectedTypes, _indexMap, TypeCount);
+      public override int GetHashCode() => HashCode.Combine(_typeSet, ArchetypeID, _collectedTypes, _indexMap, TypeCount, Capacity, _entityMap, _archetypeUpdater);
 
 }

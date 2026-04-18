@@ -85,16 +85,12 @@ public class Module<T> : IModule<T>, IEnumerable<T>
       public bool AnyElementsValid(ushort[] indices)
       {
             if (indices.Length == 0) return false;
-            bool queue = false;
+
             for(int i = 0; i < indices.Length; i++)
             {
-                  if (_sparseSet[indices[i]] == 1)
-                  {
-                        queue = true;
-                        break;
-                  }
+                  if (_sparseSet[indices[i]] == 1) return true;
             }
-            return queue;
+            return false;
       }
 
       public bool AllElementsValid(ushort[] indices)

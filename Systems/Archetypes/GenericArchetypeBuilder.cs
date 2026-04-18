@@ -9,6 +9,7 @@ public class ArchetypeBuilder : IArchetypeBuilder
       internal string _collectedTypes = null!;
       internal byte[] _indexMap = [];
       internal Type[] _types = [];
+      private Archetype.ArchetypeUpdater _updater = null!;
 
       private byte _typesCounted = 0;
       private readonly int _cap;
@@ -45,6 +46,12 @@ public class ArchetypeBuilder : IArchetypeBuilder
             return this;
       }
 
+      public ArchetypeBuilder AddUpdater(Archetype.ArchetypeUpdater archetypeUpdater)
+      {
+            _updater = archetypeUpdater;
+            return this;
+      }
+
       public ArchetypeBuilder Finalize()
       {
             _archetype.TypeCount = _typesCounted + 1;
@@ -53,6 +60,7 @@ public class ArchetypeBuilder : IArchetypeBuilder
             _archetype._collectedTypes = string.Join(", ", _archetype._typeSet);
             _archetype._indexMap = _indexMap;
             _archetype._entityMap = new int[_cap];
+            _archetype._archetypeUpdater = _updater ?? default!;
             return this;
       }
 
