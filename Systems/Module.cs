@@ -103,6 +103,28 @@ public class Module<T> : IModule<T>, IEnumerable<T>
             }
             return true;
       }
+      
+      internal void ResizeModule(int newLength)
+      {
+            T[] newBuffer = new T[newLength];
+            byte[] newSparseBuffer = new byte[newLength];
+            int previousLength = this.Length;
+            
+            int min = Math.Min(Length, newLength);
+
+            for(int i = 0; i < min; i++)
+            {
+                  ref readonly T element = ref _buffer[i];
+
+                  newBuffer[i] = element;
+                  newSparseBuffer[i] = _sparseSet[i];
+            }
+
+            _sparseSet = newSparseBuffer;
+            _buffer = newBuffer;
+
+            if (min < previousLength) Refresh();
+      }
       // enumeration
 
       public IEnumerator<T> GetEnumerator()

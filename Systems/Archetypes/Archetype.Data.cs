@@ -62,7 +62,16 @@ public partial class Archetype : IHasID<ushort>, IUpdatable
         }
     }
 
-    public void Update() => _archetypeUpdater();
+    public void Update()
+    {
+        for(int i = 0; i < Capacity; i++) _archetypeAction(i);
+    }
+
+    public void ResizeModules(int newLength)
+    {
+        Capacity = newLength;
+        _archetypeResizer(newLength);
+    }
 
     public static void UpdateComponents<T>(Archetype archetype, UpdateAction<T> _updateAction)
     {
@@ -70,4 +79,5 @@ public partial class Archetype : IHasID<ushort>, IUpdatable
         archetype.UpdateComponents(_updateAction);
     }
 
+    public void SetUpdater(Action<int> newUpdater) => _archetypeAction = newUpdater;
 }
