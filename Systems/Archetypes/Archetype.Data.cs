@@ -30,8 +30,8 @@ public partial class Archetype : IHasID<ushort>, IUpdatable
     {
         var index = _entityPosition++;
         
-        if (index > Capacity - 1) throw new ArgumentException($"Archetype has reached maximum amount of entities.");
-        else if (entity.IsNull()) throw new ArgumentNullException($"{entity} can not be null.");
+        if (entity.IsNull()) throw new ArgumentException($"entity is 'null' and cannot be incremented.");
+        else if (index > Capacity - 1) ResizeModules(Capacity * 2);
 
         if (entity.Queue > _entityMap.Length - 1) goto exit_success;
         else if (_entityMap[entity.Queue] == entity.EntityID) return false;
@@ -64,6 +64,7 @@ public partial class Archetype : IHasID<ushort>, IUpdatable
 
     public void Update()
     {
+        if (Capacity == 0) return;
         for(int i = 0; i < Capacity; i++) _archetypeAction(i);
     }
 

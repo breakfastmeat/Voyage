@@ -114,9 +114,7 @@ public class Module<T> : IModule<T>, IEnumerable<T>
 
             for(int i = 0; i < min; i++)
             {
-                  ref readonly T element = ref _buffer[i];
-
-                  newBuffer[i] = element;
+                  newBuffer[i] = _buffer[i];
                   newSparseBuffer[i] = _sparseSet[i];
             }
 

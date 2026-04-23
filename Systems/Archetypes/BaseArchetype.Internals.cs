@@ -21,7 +21,7 @@ public partial class Archetype
       public int TypeCount { get; internal set; }
       internal ushort _entityPosition = 0;
       public int Capacity { get; internal set; } = 0;
-      internal Action<int> _archetypeAction;
+      internal Action<int> _archetypeAction = (index) => { return; };
       internal Action<int> _archetypeResizer;
 
       public override string ToString() => _collectedTypes ?? string.Empty;
@@ -36,11 +36,17 @@ public partial class Archetype
             _typeSet = null!;
             ArchetypeID = 0;
             TypeCount = 0;
-            _archetypeAction = null!;
             _archetypeResizer = null!;
       }
 
       public static Archetype Construct<TBuilder>(TBuilder builder) where TBuilder : IArchetypeBuilder
+      {
+            Archetype arch = builder.Return();
+            arch.Capacity = builder.GetCapacityCount();
+            return arch;
+      }
+
+      public static Archetype Construct(ArchetypeBuilder builder)
       {
             Archetype arch = builder.Return();
             arch.Capacity = builder.GetCapacityCount();
