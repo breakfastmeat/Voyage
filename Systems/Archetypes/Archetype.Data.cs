@@ -44,4 +44,26 @@ public partial class Archetype : IHasID<ushort>
     }
 
     public Entity GetEntity(World world, int entityMapIndex) => world._entities[_entityMap[entityMapIndex]];
+
+    internal struct ArchetypeModuleEnumerator<T> : IEnumerator<T> 
+    {
+        internal Module<T> module;
+        internal ushort[] _denseSet;
+        internal int _denseSetLength;
+        internal int position = -1;
+
+        internal ArchetypeEnumerator(Archetype archetype) 
+        {
+            module = archetype.GetModule<T>();
+            _denseSet = module._denseSet;
+            _denseSetLength = module.Length;
+        }
+
+        public readonly T Current => module[_denseSet[position]];
+        readonly object IEnumerator.Current => Current;
+
+        public void Reset() => position = -1;
+        public bool MoveNext() => ++position > _denseSetLength - 1;
+        
+    }
 }
