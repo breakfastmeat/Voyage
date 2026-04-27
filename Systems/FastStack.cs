@@ -6,14 +6,17 @@ namespace Voyage.Operation;
 public struct FastStack<T> : IEnumerable<T>
 {
     internal T[] _buffer = null!;
-    internal int nextIndex = 0;
+    internal ushort nextIndex = 0;
 
     internal readonly int Count => nextIndex + 1;
     internal readonly int BufferSize => _buffer.Length;
 
     public readonly ref T this[int index] => ref _buffer[index];
 
-    public FastStack() {}
+    public FastStack()
+    {
+        _buffer = [];
+    }
 
     public static FastStack<T> Create(int initialCount) => new FastStack<T>()
     {
@@ -36,12 +39,14 @@ public struct FastStack<T> : IEnumerable<T>
     internal readonly ref T Peek() => ref _buffer[nextIndex - 1];
     internal readonly ref T Peak() => ref _buffer[^1];
 
-    public void Push(T comp)
+    public ushort Push(T comp)
     {
-        if (_buffer == null) _buffer = new T[4];
+        if (_buffer == null || _buffer.Length == 0) _buffer = new T[4];
         else if (nextIndex > BufferSize - 1) ArrayHelper<T>.CopyAndResize(ref _buffer, BufferSize * 2);
 
-        _buffer[nextIndex++] = comp;
+        ushort returnVal = nextIndex++;
+        _buffer[returnVal] = comp;
+        return returnVal;
     }
 
     internal T Pop()

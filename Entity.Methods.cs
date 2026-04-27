@@ -30,11 +30,7 @@ public partial struct Entity : IHasID<int>, IEquatable<Entity>
 
       // operators
 
-      public readonly bool Equals(Entity other)
-      {
-            (ushort, ushort) ver = (ArchetypeID, Queue), ver2 = (other.ArchetypeID, other.Queue);
-            return ver == ver2;
-      }
+      public readonly bool Equals(Entity other) => EntityID == other.EntityID;
 
       public static bool Equals(Entity main, Entity other) => main.Equals(other);
       

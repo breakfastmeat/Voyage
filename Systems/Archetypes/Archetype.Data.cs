@@ -26,21 +26,15 @@ public partial class Archetype : IHasID<ushort>, IUpdatable
 
     // entity indicing
 
-    public bool Increment(ref Entity entity)
+    public void Increment(ref Entity entity)
     {
         var index = _entityPosition++;
         
         if (entity.IsNull()) throw new ArgumentException($"entity is 'null' and cannot be incremented.");
         else if (index > Capacity - 1) ResizeModules(Capacity * 2);
 
-        if (entity.Queue > _entityMap.Length - 1) goto exit_success;
-        else if (_entityMap[entity.Queue] == entity.EntityID) return false;
-        
-        exit_success:
         _entityMap[index] = entity.EntityID;
         entity = new Entity(entity.EntityID, ArchetypeID, index);
-        
-        return true;
     }
 
     // Updating
@@ -81,4 +75,6 @@ public partial class Archetype : IHasID<ushort>, IUpdatable
     }
 
     public void SetUpdater(Action<int> newUpdater) => _archetypeAction = newUpdater;
+
+    public Entity GetEntity(World world, int entityMapIndex) => world._entities[_entityMap[entityMapIndex]];
 }
